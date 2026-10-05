@@ -1,0 +1,104 @@
+.header {
+  height: 70px;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 27px 0 20px;
+  box-sizing: border-box;
+
+  background: #121110;
+  border-bottom: 1px solid #222120;
+
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.header-left {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo img {
+  width: 44px;
+  display: block;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.brand-name {
+  font-size: 26px;
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: #ece6dd;
+}
+
+.brand-name span {
+  color: #d7874e;
+}
+
+.brand-subtitle {
+  margin-top: 7px;
+  font-size: 13px;
+  line-height: 1;
+  color: #8d8882;
+  font-weight: 400;
+}
+
+.header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.theme-button {
+  height: 37px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  border: 1px solid #272523;
+  border-radius: 19px;
+  background: #161514;
+  color: #e8e2da;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.theme-button:hover {
+  border-color: #d7874e;
+}
+
+.theme-chevron {
+  color: #8d8882;
+}
+
+@media (max-width: 600px) {
+  .header {
+    height: 65px;
+    padding: 0 14px;
+  }
+
+  .brand-name {
+    font-size: 19px;
+  }
+
+  .brand-subtitle {
+    font-size: 11px;
+  }
+}
