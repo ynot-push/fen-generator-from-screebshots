@@ -317,7 +317,7 @@ body {
   color: #171513;
 }
 
-.lichess-btn {
+.generate-btn {
   align-self: flex-start;
   margin-top: 20px;
   padding: 9px 15px;
@@ -330,9 +330,13 @@ body {
   background: #d7874e;
   color: #211e1c;
   transition: background 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  
 }
 
-.lichess-btn:hover {
+.generate-btn:hover {
   background: #c7723c;
   border-color: #c7723c;
 }

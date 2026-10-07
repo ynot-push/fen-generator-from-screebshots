@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Upload, X, RefreshCw, Trash2, Maximize2 } from "lucide-react";
+import { Upload, X, RefreshCw, Trash2, Maximize2 ,WandSparkles } from "lucide-react";
 import "./App.css";
 import ScreenshotToFen from "./sidebar.jsx";
 import Header from "./header.jsx";
@@ -78,7 +78,7 @@ function App() {
           setPlacement(result);
           setStatus("");
         } else {
-          setStatus("Image uploaded. Extraction is not connected yet.");
+          setStatus("Image uploaded");
         }
       } catch (error) {
         console.error(error);
@@ -275,7 +275,9 @@ function App() {
               </section>
             )}
 
-            {imageSrc && <button className="lichess-btn">Open in Lichess</button>}
+            {imageSrc && <button className="generate-btn"> 
+              <WandSparkles size={14} />
+              Generate FEN</button>}
           </div>
         </main>
       </div>

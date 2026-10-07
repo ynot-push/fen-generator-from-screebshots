@@ -33,7 +33,7 @@ export default function ScreenshotToFen() {
         <div>
           <div className="board-settings-title">Board settings</div>
           <div className="board-settings-description">
-            Configure how the pieces are detected
+            Configure how the fen is generated
           </div>
         </div>
       </div>
