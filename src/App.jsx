@@ -4,6 +4,7 @@ import "./App.css";
 import ScreenshotToFen from "./sidebar.jsx";
 import Header from "./header.jsx";
 import logo from "./assests/LOGO.png";
+import Board from "./result_board.jsx";
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
 
@@ -48,6 +49,7 @@ function App() {
   const [status, setStatus] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [generate, setGenerate] = useState(false);
   const inputRef = useRef(null);
   const dragDepth = useRef(0);
 
@@ -116,6 +118,8 @@ function App() {
     if (dragDepth.current === 0) setDragging(false);
   };
 
+
+
   const handleDrop = (e) => {
     e.preventDefault();
     dragDepth.current = 0;
@@ -149,7 +153,7 @@ function App() {
 
       <div className="app-body">
         <ScreenshotToFen />
-
+        {!generate ? (
         <main className="content">
           <div className="main-panel">
             {imageSrc ? (
@@ -275,11 +279,14 @@ function App() {
               </section>
             )}
 
-            {imageSrc && <button className="generate-btn"> 
+            {imageSrc && <button className="generate-btn" onClick={() => setGenerate(true)}>
               <WandSparkles size={14} />
               Generate FEN</button>}
           </div>
         </main>
+        ) : (
+         <Board />
+        )}
       </div>
 
       {previewOpen && (

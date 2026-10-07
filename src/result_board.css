@@ -1,0 +1,250 @@
+.board-container {
+  --bg: #181614;
+  --surface: #211e1b;
+  --line: #2d2924;
+  --fg: #ece6dd;
+  --muted: #a0978c;
+  --accent: #e08f50;
+  --accent-fg: #1c1109;
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 860px;
+  padding: 24px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  color: var(--fg);
+  font-family: "Outfit Variable", "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+  margin-top: 20px;
+}
+
+.board-container * { box-sizing: border-box; }
+
+/* Header */
+.board-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.board-head h1 { margin: 0; font-size: 22px; font-weight: 600; }
+.board-head p {
+  margin: 4px 0 0;
+  max-width: 440px;
+  color: var(--muted);
+  font-size: 14.72px;
+  line-height: 1.5;
+}
+
+.toolbar { display: flex; align-items: center; gap: 12px; }
+
+.btn {
+  height: 38px;
+  padding: 0 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--fg);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.btn:hover { border-color: var(--muted); }
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 38px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--fg);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+.toggle-track {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  background: var(--line);
+  border-radius: 99px;
+  transition: background 0.15s;
+}
+.toggle-track::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  background: var(--fg);
+  border-radius: 50%;
+  transition: translate 0.15s;
+}
+.toggle.is-on .toggle-track { background: var(--accent); }
+.toggle.is-on .toggle-track::after { translate: 18px 0; background: #fffaf3; }
+
+.btn:focus-visible,
+.toggle:focus-visible,
+.tray-piece:focus-visible,
+.fen-copy:focus-visible,
+.fen-input:focus-visible,
+.lichess-btn:focus-visible {
+  outline: 2px solid #f3b98a;
+  outline-offset: 2px;
+}
+
+/* Board + tray */
+.editor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 24px;
+  flex-direction: row;
+}
+
+.chessboard-wrapper {
+  position: relative;
+  width: 400px;
+  max-width: 100%;
+  flex: none;
+}
+
+/* badges only; the colour tint comes from customSquareStyles */
+.board-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+.square-overlay {
+  position: absolute;
+  width: 12.5%;
+  height: 12.5%;
+}
+.confidence-badge {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  padding: 2px 6px;
+  background: rgba(16, 13, 10, 0.85);
+  border-radius: 99px;
+  color: #fff;
+  font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* Piece tray */
+.piece-tray {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.tray-title {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.piece-row { display: flex; gap: 6px; }
+
+.tray-piece {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: grab;
+}
+.tray-piece:active { cursor: grabbing; }
+
+/* white pieces on a dark tile, black pieces on a light tile */
+.tray-piece.on-dark  { background: #a07b55; }
+.tray-piece.on-light { background: #d8c3a2; }
+
+.tray-piece:hover { border-color: var(--fg); }
+.tray-piece.is-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* FEN */
+.fen-section { display: flex; flex-direction: column; gap: 10px; }
+.fen-label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.fen-field { position: relative; }
+.fen-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 84px 0 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--fg);
+  font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 14px;
+  text-overflow: ellipsis;
+}
+.fen-copy {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  height: 36px;
+  padding: 0 14px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--fg);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.fen-copy:hover { border-color: var(--accent); color: var(--accent); }
+
+.lichess-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  align-self: flex-start;
+  height: 48px;
+  padding: 0 24px;
+  background: var(--accent);
+  border-radius: 10px;
+  color: var(--accent-fg);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.lichess-btn:hover { filter: brightness(1.08); }
+
+@media (max-width: 560px) {
+  .board-container { padding: 16px; }
+  .lichess-btn { align-self: stretch; }
+  .piece-row { flex-wrap: wrap; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle-track, .toggle-track::after { transition: none; }
+}

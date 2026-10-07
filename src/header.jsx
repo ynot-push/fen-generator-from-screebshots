@@ -12,7 +12,7 @@ export default function Header() {
 
         <div className="brand">
           <div className="brand-name">
-            <span>FEN</span> Generator
+            <span>FEN</span> .Generator
           </div>
 
           <div className="brand-subtitle">Screenshot → FEN</div>
