@@ -2,16 +2,8 @@ import { useMemo, useState } from "react";
 import { Chessboard, ChessboardProvider, SparePiece } from "react-chessboard";
 import "./result_board.css";
 
-const DETECTED_FEN = "rk6/p5p1/8/N6p/4n3/3K1B2/P4PPP/3R3R";
-const SIDE_TO_MOVE = "w";
-const CASTLING = "Kkq";
-
-const confidences = {
-  a8: 0.99, b8: 0.78, a7: 0.93, a5: 0.96, h5: 0.88, e4: 0.71,
-  d3: 0.84, f3: 0.91, a2: 0.96, f2: 0.98, g2: 0.98, d1: 0.93,
-};
-
 const FILES = "abcdefgh";
+
 const TRAY = [
   ["wK", "wQ", "wR", "wB", "wN", "wP"],
   ["bK", "bQ", "bR", "bB", "bN", "bP"],
@@ -20,17 +12,21 @@ const TRAY = [
 /* "rk6/p5p1/..." -> { a8: "bR", ... } */
 function fenToPosition(placement) {
   const pos = {};
+
   placement.split("/").forEach((row, r) => {
     let f = 0;
+
     for (const ch of row) {
-      if (/\d/.test(ch)) f += Number(ch);
-      else {
+      if (/\d/.test(ch)) {
+        f += Number(ch);
+      } else {
         const color = ch === ch.toUpperCase() ? "w" : "b";
         pos[FILES[f] + (8 - r)] = color + ch.toUpperCase();
         f++;
       }
     }
   });
+
   return pos;
 }
 
@@ -39,23 +35,60 @@ function positionToPlacement(pos) {
   return Array.from({ length: 8 }, (_, r) => {
     let out = "";
     let empty = 0;
+
     for (let f = 0; f < 8; f++) {
       const p = pos[FILES[f] + (8 - r)];
-      if (!p) empty++;
-      else {
-        if (empty) { out += empty; empty = 0; }
+
+      if (!p) {
+        empty++;
+      } else {
+        if (empty) {
+          out += empty;
+          empty = 0;
+        }
+
         out += p[0] === "w" ? p[1] : p[1].toLowerCase();
       }
     }
+
     return out + (empty || "");
   }).join("/");
 }
 
-/* our { e4: "bN" } -> v5 format { e4: { pieceType: "bN" } } */
+/* { e4: "bN" } -> { e4: { pieceType: "bN" } } */
 function toBoardPosition(pos) {
   return Object.fromEntries(
-    Object.entries(pos).map(([sq, pieceType]) => [sq, { pieceType }])
+    Object.entries(pos).map(([sq, pieceType]) => [
+      sq,
+      { pieceType },
+    ])
   );
+}
+
+/* { whiteKingSide: true, ... } -> "Kkq" or "-" */
+function castlingToString(c) {
+  return (
+    (c.whiteKingSide ? "K" : "") +
+    (c.whiteQueenSide ? "Q" : "") +
+    (c.blackKingSide ? "k" : "") +
+    (c.blackQueenSide ? "q" : "") ||
+    "-"
+  );
+}
+
+/* Backend predictions -> { a8: 0.99, b8: 0.87, ... } */
+function predictionsToConfidences(predictions) {
+  const result = {};
+
+  for (const prediction of predictions ?? []) {
+    const file = FILES[prediction.col];
+    const rank = 8 - prediction.row;
+    const square = `${file}${rank}`;
+
+    result[square] = prediction.confidence;
+  }
+
+  return result;
 }
 
 function squareStyle(square) {
@@ -77,16 +110,9 @@ function confidenceLevel(c) {
   return "low";
 }
 
-
-const confidenceSquareStyles = Object.fromEntries(
-  Object.entries(confidences).map(([sq, c]) => [
-    sq,
-    { backgroundColor: CONF_COLORS[confidenceLevel(c)] },
-  ])
-);
-
 function TrayPiece({ piece, selected, onSelect }) {
   const tone = piece[0] === "b" ? "on-light" : "on-dark";
+
   return (
     <div
       className={`tray-piece ${tone}${selected ? " is-selected" : ""}`}
@@ -98,53 +124,100 @@ function TrayPiece({ piece, selected, onSelect }) {
   );
 }
 
-export default function Board() {
-  const [position, setPosition] = useState(() => fenToPosition(DETECTED_FEN));
+export default function Board({
+  fen: detectedFen,
+  predictions,
+  boardConfidence,
+  checkerScore,
+  turn,
+  castling,
+}) {
+  const [position, setPosition] = useState(() =>
+    fenToPosition(detectedFen)
+  );
+
   const [showOverlay, setShowOverlay] = useState(true);
   const [tool, setTool] = useState(null);
   const [copied, setCopied] = useState(false);
 
-  const fen = useMemo(
-    () => `${positionToPlacement(position)} ${SIDE_TO_MOVE} ${CASTLING} - 0 1`,
-    [position]
+  const confidences = useMemo(
+    () => predictionsToConfidences(predictions),
+    [predictions]
   );
-  const lichessUrl = `https://lichess.org/analysis/${fen.replace(/ /g, "_")}`;
+  const confidenceSquareStyles = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(confidences).map(([sq, c]) => [
+          sq,
+          {
+            backgroundColor: CONF_COLORS[confidenceLevel(c)],
+          },
+        ])
+      ),
+    [confidences]
+  );
+
+  const fen = useMemo(
+    () =>
+      `${positionToPlacement(position)} ${turn} ${castlingToString(
+        castling
+      )} - 0 1`,
+    [position, turn, castling]
+  );
+
+  const lichessUrl = `https://lichess.org/analysis/${fen.replace(
+    / /g,
+    "_"
+  )}`;
 
   const reset = () => {
-    setPosition(fenToPosition(DETECTED_FEN));
+    setPosition(fenToPosition(detectedFen));
     setTool(null);
   };
-
 
   const handleDrop = ({ piece, sourceSquare, targetSquare }) => {
     setPosition((prev) => {
       const next = { ...prev };
+
       if (!targetSquare) {
-        if (!piece.isSparePiece) delete next[sourceSquare];
+        if (!piece.isSparePiece) {
+          delete next[sourceSquare];
+        }
+
         return next;
       }
+
       if (piece.isSparePiece) {
         next[targetSquare] = piece.pieceType;
       } else {
         delete next[sourceSquare];
         next[targetSquare] = piece.pieceType;
       }
+
       return next;
     });
+
     return true;
   };
 
-
   const handleSquareClick = ({ square }) => {
     if (!tool) return;
-    setPosition((prev) => ({ ...prev, [square]: tool }));
+
+    setPosition((prev) => ({
+      ...prev,
+      [square]: tool,
+    }));
   };
 
   const copyFen = async () => {
     try {
       await navigator.clipboard.writeText(fen);
+
       setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
+
+      setTimeout(() => {
+        setCopied(false);
+      }, 1500);
     } catch {
       document.getElementById("fen-input")?.select();
     }
@@ -156,10 +229,23 @@ export default function Board() {
     onPieceDrop: handleDrop,
     onSquareClick: handleSquareClick,
     allowDragOffBoard: true,
-    squareStyles: showOverlay ? confidenceSquareStyles : {},
-    darkSquareStyle: { backgroundColor: "#a07b55" },
-    lightSquareStyle: { backgroundColor: "#d8c3a2" },
-    boardStyle: { borderRadius: "8px", overflow: "hidden" },
+
+    squareStyles: showOverlay
+      ? confidenceSquareStyles
+      : {},
+
+    darkSquareStyle: {
+      backgroundColor: "#a07b55",
+    },
+
+    lightSquareStyle: {
+      backgroundColor: "#d8c3a2",
+    },
+
+    boardStyle: {
+      borderRadius: "8px",
+      overflow: "hidden",
+    },
   };
 
   return (
@@ -167,11 +253,14 @@ export default function Board() {
       <header className="board-head">
         <div>
           <h1>Detected board</h1>
+
           <p>
-            Select a square to see how sure the detector was. Pick a piece on
-            the right to place it, or drag pieces to correct a mistake.
+            If the generated FEN is wrong, you can edit it below by
+            picking a piece on the right or dragging pieces to correct
+            a mistake.
           </p>
         </div>
+
         <div className="toolbar">
           <button
             type="button"
@@ -180,10 +269,19 @@ export default function Board() {
             aria-checked={showOverlay}
             onClick={() => setShowOverlay((v) => !v)}
           >
-            <span className="toggle-track" aria-hidden="true" />
+            <span
+              className="toggle-track"
+              aria-hidden="true"
+            />
+
             Confidence
           </button>
-          <button type="button" className="btn" onClick={reset}>
+
+          <button
+            type="button"
+            className="btn"
+            onClick={reset}
+          >
             Reset
           </button>
         </div>
@@ -191,28 +289,56 @@ export default function Board() {
 
       <ChessboardProvider options={options}>
         <div className="editor">
+
           <div className="chessboard-wrapper">
             <Chessboard />
 
             {showOverlay && (
-              <div className="board-overlay">
-                {Object.entries(confidences).map(([square, c]) => (
-                  <div
-                    key={square}
-                    className="square-overlay"
-                    style={squareStyle(square)}
-                  >
-                    <span className="confidence-badge">
-                      {Math.round(c * 100)}%
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <>
+
+                <div className="acc-pill">
+                  <span className="acc-pill-dot" />
+
+                  <span>
+                    Board detection{" "}
+                    <b>
+                      {Math.round(boardConfidence * 100)}%
+                    </b>
+                  </span>
+
+                  <span>
+                    Refinement{" "}
+                    <b>
+                      {Math.round(checkerScore * 100)}%
+                    </b>
+                  </span>
+                </div>
+
+                {/* Per-square confidence */}
+                <div className="board-overlay">
+                  {Object.entries(confidences).map(
+                    ([square, c]) => (
+                      <div
+                        key={square}
+                        className="square-overlay"
+                        style={squareStyle(square)}
+                      >
+                        <span className="confidence-badge">
+                          {Math.round(c * 100)}%
+                        </span>
+                      </div>
+                    )
+                  )}
+                </div>
+              </>
             )}
           </div>
 
           <div className="piece-tray">
-            <span className="tray-title">Set up position</span>
+            <span className="tray-title">
+              Set up position
+            </span>
+
             {TRAY.map((row, i) => (
               <div className="piece-row" key={i}>
                 {row.map((piece) => (
@@ -220,7 +346,9 @@ export default function Board() {
                     key={piece}
                     piece={piece}
                     selected={tool === piece}
-                    onSelect={(p) => setTool((t) => (t === p ? null : p))}
+                    onSelect={(p) =>
+                      setTool((t) => (t === p ? null : p))
+                    }
                   />
                 ))}
               </div>
@@ -230,7 +358,13 @@ export default function Board() {
       </ChessboardProvider>
 
       <div className="fen-section">
-        <label className="fen-label" htmlFor="fen-input">FEN</label>
+        <label
+          className="fen-label"
+          htmlFor="fen-input"
+        >
+          FEN
+        </label>
+
         <div className="fen-field">
           <input
             id="fen-input"
@@ -239,10 +373,16 @@ export default function Board() {
             readOnly
             spellCheck="false"
           />
-          <button type="button" className="fen-copy" onClick={copyFen}>
+
+          <button
+            type="button"
+            className="fen-copy"
+            onClick={copyFen}
+          >
             {copied ? "Copied" : "Copy"}
           </button>
         </div>
+
         <a
           className="lichess-btn"
           href={lichessUrl}
@@ -250,6 +390,7 @@ export default function Board() {
           rel="noopener noreferrer"
         >
           Open in Lichess analysis
+
           <svg
             width="16"
             height="16"

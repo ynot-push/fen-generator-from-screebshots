@@ -1,11 +1,11 @@
 .board-container {
-  --bg: #181614;
-  --surface: #211e1b;
-  --line: #2d2924;
-  --fg: #ece6dd;
-  --muted: #a0978c;
-  --accent: #e08f50;
-  --accent-fg: #1c1109;
+  --bg: var(--c-card);
+  --surface: var(--c-raised);
+  --line: var(--c-border);
+  --fg: var(--c-text);
+  --muted: var(--c-muted);
+  --accent: var(--c-accent);
+  --accent-fg: var(--c-accent-fg);
 
   display: flex;
   flex-direction: column;
@@ -18,11 +18,12 @@
   color: var(--fg);
   font-family: "Outfit Variable", "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
   margin-top: 20px;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .board-container * { box-sizing: border-box; }
 
-/* Header */
+
 .board-head {
   display: flex;
   align-items: flex-start;
@@ -33,6 +34,7 @@
 .board-head h1 { margin: 0; font-size: 22px; font-weight: 600; }
 .board-head p {
   margin: 4px 0 0;
+  margin-bottom: 10px;
   max-width: 440px;
   color: var(--muted);
   font-size: 14.72px;
@@ -83,8 +85,9 @@
   left: 3px;
   width: 16px;
   height: 16px;
-  background: var(--fg);
+  background: var(--c-knob);
   border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
   transition: translate 0.15s;
 }
 .toggle.is-on .toggle-track { background: var(--accent); }
@@ -100,7 +103,6 @@
   outline-offset: 2px;
 }
 
-/* Board + tray */
 .editor {
   display: flex;
   flex-wrap: wrap;
@@ -116,7 +118,7 @@
   flex: none;
 }
 
-/* badges only; the colour tint comes from customSquareStyles */
+
 .board-overlay {
   position: absolute;
   inset: 0;
@@ -142,7 +144,6 @@
   line-height: 1.2;
 }
 
-/* Piece tray */
 .piece-tray {
   display: flex;
   flex-direction: column;
@@ -172,7 +173,7 @@
 }
 .tray-piece:active { cursor: grabbing; }
 
-/* white pieces on a dark tile, black pieces on a light tile */
+
 .tray-piece.on-dark  { background: #a07b55; }
 .tray-piece.on-light { background: #d8c3a2; }
 
@@ -248,3 +249,38 @@
 @media (prefers-reduced-motion: reduce) {
   .toggle-track, .toggle-track::after { transition: none; }
 }
+
+.acc-pill {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+  color: #fff;
+  background: rgba(20, 20, 20, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.acc-pill b {
+  font-weight: 700;
+}
+
+.acc-pill-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+}
+
+.acc-pill--high .acc-pill-dot   { background: #78a046; }
+.acc-pill--medium .acc-pill-dot { background: #dcaf3c; }
+.acc-pill--low .acc-pill-dot    { background: #f06e50; }

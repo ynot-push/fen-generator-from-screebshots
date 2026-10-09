@@ -1,18 +1,20 @@
 .s2f {
-  --bg: #121110;
-  --panel: #161514;
-  --text: #e8e2da;
-  --muted: #8f8a83;
-  --border: #272523;
-  --accent: #d7874e;
+  --bg: var(--c-page);
+  --panel: var(--c-card);
+  --text: var(--c-text);
+  --muted: var(--c-muted);
+  --border: var(--c-border);
+  --accent: var(--c-accent);
 
   width: 289px;
   flex-shrink: 0;
   box-sizing: border-box;
   padding: 31px 27px 34px 20px;
+  padding-top: 20px;
   font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
   color: var(--text);
   background: var(--bg);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 /* Header block */
@@ -35,7 +37,7 @@
 .board-settings-title {
   font-size: 16px;
   font-weight: 600;
-  color: #f1eee9;
+  color: var(--c-text-strong);
   line-height: 1.2;
 }
 
@@ -55,6 +57,7 @@
   border-radius: 10px;
   padding: 15px 19px 19px;
   margin-bottom: 20px;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .side-card-head {
@@ -72,21 +75,21 @@
 .side-card-icon {
   width: 15px;
   height: 15px;
-  color: #cfc8bf;
+  color: var(--c-text-soft);
   flex-shrink: 0;
 }
 
 .side-card-icon--light {
   width: 20px;
   height: 20px;
-  color: #e3d9cb;
+  color: var(--c-text-soft);
   margin-top: 1px;
 }
 
 .side-card-title {
   font-size: 13px;
   font-weight: 500;
-  color: #e8e2da;
+  color: var(--text);
   line-height: 1.2;
 }
 
@@ -136,7 +139,7 @@
   width: 14px;
   height: 14px;
   transform: translateY(-50%);
-  color: #cfc8bf;
+  color: var(--c-text-soft);
   pointer-events: none;
 }
 
@@ -163,13 +166,13 @@
 .castling-icon {
   width: 19px;
   height: 19px;
-  color: #bfae98;
+  color: var(--c-text-soft);
   flex-shrink: 0;
 }
 
 .castling-label {
   font-size: 13px;
-  color: #d5cec5;
+  color: var(--text);
   font-weight: 400;
 }
 
@@ -193,8 +196,8 @@
   position: absolute;
   cursor: pointer;
   inset: 0;
-  background-color: #262423;
-  border: 1px solid #302d2b;
+  background-color: var(--c-raised);
+  border: 1px solid var(--c-border-2);
   box-sizing: border-box;
   border-radius: 26px;
   transition: 0.25s ease;
@@ -207,15 +210,15 @@
   width: 19px;
   left: 3px;
   top: 3px;
-  background-color: #b9b5b0;
+  background-color: var(--c-knob);
   transition: 0.25s ease;
   border-radius: 50%;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25);
 }
 
 .switch input:checked + .slider {
-  background-color: #d7874e;
-  border-color: #d7874e;
+  background-color: var(--accent);
+  border-color: var(--accent);
 }
 
 .switch input:checked + .slider:before {

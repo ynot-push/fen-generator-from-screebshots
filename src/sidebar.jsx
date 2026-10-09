@@ -1,33 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 import { Settings, MousePointer2, Crown, ChevronDown } from "lucide-react";
+import { Brand } from "./header.jsx";
 import "./sidebar.css";
 
-export default function ScreenshotToFen() {
-  const [turn, setTurn] = useState("w");
+const OPTIONS = [
+  { key: "whiteKingSide", label: "White King side" },
+  { key: "whiteQueenSide", label: "White Queen side" },
+  { key: "blackKingSide", label: "Black King side" },
+  { key: "blackQueenSide", label: "Black Queen side" },
+];
 
-  const [castling, setCastling] = useState({
-    whiteKingSide: true,
-    whiteQueenSide: true,
-    blackKingSide: true,
-    blackQueenSide: true,
-  });
-
-  const options = [
-    { key: "whiteKingSide", label: "White King side" },
-    { key: "whiteQueenSide", label: "White Queen side" },
-    { key: "blackKingSide", label: "Black King side" },
-    { key: "blackQueenSide", label: "Black Queen side" },
-  ];
-
-  const handleToggle = (key) => {
-    setCastling((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
+export default function ScreenshotToFen({ turn, setTurn, castling, setCastling }) {
+  const handleToggle = (key) =>
+    setCastling((prev) => ({ ...prev, [key]: !prev[key] }));
 
   return (
     <aside className="s2f">
+      <Brand />
+
       <div className="board-settings">
         <Settings className="board-settings-icon" />
         <div>
@@ -67,10 +57,9 @@ export default function ScreenshotToFen() {
         </div>
 
         <div className="castling-list">
-          {options.map(({ key, label }) => (
+          {OPTIONS.map(({ key, label }) => (
             <div key={key} className="castling-item">
               <div className="castling-left">
-                
                 <span className="castling-label">{label}</span>
               </div>
 

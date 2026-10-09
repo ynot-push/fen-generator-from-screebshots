@@ -1,35 +1,23 @@
-.header {
-  height: 70px;
-  width: 100%;
 
+.brand-block {
   display: flex;
   align-items: center;
-
-  padding: 0 27px 0 20px;
-  box-sizing: border-box;
-
-  background: #121110;
-  border-bottom: 1px solid #222120;
-
+  gap: 12px;
+  margin: 0 0 28px -3px;
+  margin-bottom: 40px;
   font-family: Inter, system-ui, sans-serif;
 }
 
-.header-left {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
 .logo {
-  width: 48px;
+  width: 44px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .logo img {
-  width: 44px;
+  width: 42px;
   display: block;
 }
 
@@ -37,68 +25,78 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 0;
 }
 
 .brand-name {
-  font-size: 26px;
+  font-size: 22px;
   line-height: 1.1;
   font-weight: 600;
   letter-spacing: -0.3px;
-  color: #ece6dd;
+  color: var(--c-text);
+  white-space: nowrap;
 }
 
 .brand-name span {
-  color: #d7874e;
+  color: var(--c-accent);
 }
 
 .brand-subtitle {
-  margin-top: 7px;
-  font-size: 13px;
+  margin-top: 6px;
+  font-size: 12px;
   line-height: 1;
-  color: #8d8882;
-  font-weight: 400;
+  color: var(--c-muted);
 }
 
-.header-right {
-  margin-left: auto;
+
+.theme-toggle {
+  position: relative;
+  width: 64px;
+  height: 34px;
+  padding: 0 7px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
-}
-
-.theme-button {
-  height: 37px;
-  padding: 0 14px;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-
-  border: 1px solid #272523;
-  border-radius: 19px;
-  background: #161514;
-  color: #e8e2da;
+  justify-content: space-between;
+  border: 1px solid var(--c-border);
+  border-radius: 999px;
+  background: var(--c-raised);
   cursor: pointer;
-  transition: border-color 0.2s ease;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
 
-.theme-button:hover {
-  border-color: #d7874e;
+.theme-toggle:hover {
+  border-color: var(--c-accent);
 }
 
-.theme-chevron {
-  color: #8d8882;
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
 }
 
-@media (max-width: 600px) {
-  .header {
-    height: 65px;
-    padding: 0 14px;
-  }
+.theme-toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--c-accent);
+  box-shadow: 0 2px 6px var(--c-shadow);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-  .brand-name {
-    font-size: 19px;
-  }
+.theme-toggle[aria-checked="true"] .theme-toggle-knob {
+  transform: translateX(30px);
+}
 
-  .brand-subtitle {
-    font-size: 11px;
-  }
+.theme-toggle-icon {
+  position: relative;
+  z-index: 1;
+  color: var(--c-muted);
+  transition: color 0.3s ease;
+}
+
+.theme-toggle-icon.is-active {
+  color: #fff;
 }
