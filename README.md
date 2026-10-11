@@ -18,36 +18,8 @@ This project combines a React + Vite frontend with a FastAPI backend that detect
 - Frontend: React, Vite, CSS
 - Backend: Python, FastAPI
 - ML / CV: OpenCV, PyTorch, TorchVision
-- Model assets: pretrained board detector and piece classifier weights
 
-## Repository structure
 
-```text
-.
-├── backend/
-│   ├── main.py
-│   ├── models/
-│   │   ├── mobilenet_v3_large_best.pt
-│   │   └── piece_classifier_final.pt
-│   ├── services/
-│   │   ├── Board_model.py
-│   │   ├── checker_snap.py
-│   │   ├── real_crops.py
-│   │   └── square_model.py
-│   └── requirement.txt
-├── src/
-│   ├── App.jsx
-│   ├── App.css
-│   ├── header.jsx
-│   ├── result_board.jsx
-│   ├── sidebar.jsx
-│   └── ...
-├── index.html
-├── package.json
-├── vite.config.js
-├── eslint.config.js
-└── README.md
-```
 
 ## Features
 
@@ -78,7 +50,6 @@ The backend:
 
 - Node.js 18+ and npm
 - Python 3.10+
-- A GPU is optional; CPU inference works too
 
 ### 1) Install frontend dependencies
 
